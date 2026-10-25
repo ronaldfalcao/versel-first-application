@@ -1,0 +1,41 @@
+{
+  "name": "versel-first-application",
+  "version": "0.1.0",
+  "private": true,
+  "description": "First Application with Vercel",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronaldfalcao/versel-first-application.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ronaldfalcao/versel-first-application/issues"
+  },
+  "homepage": "https://github.com/ronaldfalcao/versel-first-application#readme",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@vercel/analytics": "^2.0.1",
+    "autoprefixer": "^10.6.1",
+    "next": "^16.4.3",
+    "postcss": "^8.5.31",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^16.4.3",
+    "typescript": "^6.0.3"
+  }
+}
