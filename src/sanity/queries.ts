@@ -11,6 +11,7 @@ const postSummaryFields = `
   excerpt,
   publishedAt,
   updatedAt,
+  "readingMinutes": round(length(pt::text(body)) / 5 / 200),
   mainImage{${imageFields}},
   author->{name, "slug": slug.current, jobTitle, image{${imageFields}}},
   categories[]->{title, "slug": slug.current}

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { PostGrid } from '@/components/PostCard'
+import { PostList } from '@/components/PostCard'
 import { SanityImage } from '@/components/SanityImage'
 import { safeHref } from '@/lib/format'
 import { JsonLd } from '@/lib/jsonld'
@@ -48,19 +48,20 @@ async function AuthorContent({ params }: Pick<PageProps<'/autores/[slug]'>, 'par
           },
         }}
       />
-      <header className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-center">
+      <header className="mb-16 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
         {author.image && (
-          <SanityImage image={author.image} sizes="128px" className="h-32 w-32 rounded-full object-cover" />
+          <SanityImage image={author.image} sizes="128px" className="h-32 w-32 rounded-full object-cover ring-4 ring-accent-soft" />
         )}
         <div>
-          <h1 className="font-serif text-4xl font-bold">{author.name}</h1>
-          {author.jobTitle && <p className="mt-1 text-[var(--muted)]">{author.jobTitle}</p>}
-          {author.bio && <p className="mt-3 whitespace-pre-line">{author.bio}</p>}
+          <p className="eyebrow text-accent">Autor</p>
+          <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">{author.name}</h1>
+          {author.jobTitle && <p className="mt-1 text-muted">{author.jobTitle}</p>}
+          {author.bio && <p className="mt-4 whitespace-pre-line font-serif text-lg leading-relaxed">{author.bio}</p>}
           {links.length > 0 && (
-            <ul className="mt-3 flex flex-wrap gap-4 text-sm">
+            <ul className="mt-4 flex flex-wrap gap-4 text-sm">
               {links.map((href) => (
                 <li key={href}>
-                  <a href={href} rel="me noopener noreferrer" className="underline">
+                  <a href={href} rel="me noopener noreferrer" className="text-accent underline decoration-accent-soft decoration-2 hover:decoration-accent">
                     {new URL(href).hostname.replace(/^www\./, '')}
                   </a>
                 </li>
@@ -69,15 +70,15 @@ async function AuthorContent({ params }: Pick<PageProps<'/autores/[slug]'>, 'par
           )}
         </div>
       </header>
-      <h2 className="mb-6 text-xl font-semibold">Posts</h2>
-      <PostGrid posts={author.posts} />
+      <h2 className="ornament eyebrow mb-12">Entradas</h2>
+      <PostList posts={author.posts} />
     </>
   )
 }
 
 export default function AuthorPage({ params }: PageProps<'/autores/[slug]'>) {
   return (
-    <Suspense fallback={<p className="text-[var(--muted)]">Carregando…</p>}>
+    <Suspense fallback={<p className="text-muted">Carregando…</p>}>
       <AuthorContent params={params} />
     </Suspense>
   )

@@ -25,6 +25,7 @@ export type PostSummary = {
   excerpt: string
   publishedAt: string
   updatedAt?: string
+  readingMinutes?: number
   mainImage?: SanityImage
   author?: AuthorRef
   categories?: Category[]
