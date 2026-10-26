@@ -39,6 +39,6 @@ export type Post = PostSummary & {
 export type SiteSettings = {
   title: string
   description: string
-  ogImage?: SanityImage
+  about?: PortableTextBlock[]
   sameAs?: string[]
 }

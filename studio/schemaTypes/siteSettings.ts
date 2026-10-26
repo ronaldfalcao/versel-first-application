@@ -14,11 +14,10 @@ export const siteSettings = defineType({
       validation: (rule) => rule.required().max(170),
     }),
     defineField({
-      name: 'ogImage',
-      title: 'Imagem padrão de compartilhamento',
-      description: '1200×630 px recomendado.',
-      type: 'image',
-      fields: [defineField({name: 'alt', title: 'Texto alternativo', type: 'string'})],
+      name: 'about',
+      title: 'Texto da página Sobre',
+      description: 'Aparece em /sobre, acima dos autores. As imagens de compartilhamento são geradas automaticamente.',
+      type: 'blockContent',
     }),
     defineField({
       name: 'sameAs',

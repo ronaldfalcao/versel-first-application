@@ -17,6 +17,8 @@ export async function GET() {
     '',
     '## Optional',
     '',
+    `- [Sobre](${siteUrl}/sobre)`,
+    `- [Arquivo](${siteUrl}/arquivo)`,
     `- [Feed RSS](${siteUrl}/feed.xml)`,
     `- [Sitemap](${siteUrl}/sitemap.xml)`,
     '',
