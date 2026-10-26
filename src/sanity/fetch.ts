@@ -1,7 +1,9 @@
 import { cacheLife, cacheTag } from 'next/cache'
 import { client } from './client'
 import {
+  archiveQuery,
   authorQuery,
+  authorsQuery,
   authorSlugsQuery,
   categoryQuery,
   categorySlugsQuery,
@@ -51,3 +53,8 @@ export const getAuthor = (slug: string) =>
   sanityFetch<(Author & { posts: PostSummary[] }) | null>(authorQuery, { slug }, null)
 
 export const getAuthorSlugs = () => sanityFetch<{ slug: string }[]>(authorSlugsQuery, {}, [])
+
+export const getArchive = () =>
+  sanityFetch<Pick<PostSummary, 'title' | 'slug' | 'publishedAt' | 'readingMinutes'>[]>(archiveQuery, {}, [])
+
+export const getAuthors = () => sanityFetch<Author[]>(authorsQuery, {}, [])

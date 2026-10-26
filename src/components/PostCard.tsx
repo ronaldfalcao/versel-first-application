@@ -1,88 +1,125 @@
 import Link from 'next/link'
-import { dateParts, readingTime } from '@/lib/format'
-import type { PostSummary } from '@/sanity/types'
+import { formatShortDate, readingTime } from '@/lib/format'
+import type { Category, PostSummary } from '@/sanity/types'
+import { Art } from './Art'
 import { SanityImage } from './SanityImage'
 
-// Data no formato de cabeçalho de diário: dia grande, mês e ano em versalete
-function EntryDate({ iso, className = '' }: { iso: string; className?: string }) {
-  const { day, month, year } = dateParts(iso)
-  return (
-    <time dateTime={iso} className={`flex items-baseline gap-2 sm:flex-col sm:gap-1 ${className}`}>
-      <span className="font-display text-4xl font-medium leading-none text-accent sm:text-5xl">{day}</span>
-      <span className="eyebrow text-muted">
-        {month} {year}
-      </span>
-    </time>
+// Capa: imagem do post ou, na falta dela, a composição geométrica do slug
+export function Cover({
+  post,
+  sizes,
+  priority = false,
+  cols = 4,
+  rows = 3,
+  className = '',
+}: {
+  post: Pick<PostSummary, 'slug' | 'mainImage'>
+  sizes: string
+  priority?: boolean
+  cols?: number
+  rows?: number
+  className?: string
+}) {
+  return post.mainImage?.asset ? (
+    <SanityImage image={post.mainImage} sizes={sizes} priority={priority} className={`object-cover ${className}`} />
+  ) : (
+    <Art seed={post.slug} cols={cols} rows={rows} className={className} />
   )
 }
 
-function Categories({ post }: { post: PostSummary }) {
-  if (!post.categories?.length) return null
+export function Chips({ categories }: { categories?: Category[] }) {
+  if (!categories?.length) return null
   return (
-    <p className="eyebrow mb-2 text-accent">
-      {post.categories.map((c, i) => (
-        <span key={c.slug}>
-          {i > 0 && ' · '}
-          <Link href={`/categorias/${c.slug}`} className="hover:underline">
+    <ul className="flex flex-wrap gap-2">
+      {categories.map((c) => (
+        <li key={c.slug}>
+          <Link
+            href={`/categorias/${c.slug}`}
+            className="relative z-10 inline-block rounded-full bg-lilac px-3 py-1 text-xs font-semibold text-night transition-colors hover:bg-apricot"
+          >
             {c.title}
           </Link>
-        </span>
+        </li>
       ))}
-    </p>
+    </ul>
   )
 }
 
 function Meta({ post }: { post: PostSummary }) {
   return (
-    <p className="mt-4 text-sm text-muted">
-      {post.author && <>{post.author.name} · </>}
-      {readingTime(post.readingMinutes)}
+    <p className="label flex flex-wrap items-center gap-x-3 gap-y-1 text-muted">
+      <time dateTime={post.publishedAt}>{formatShortDate(post.publishedAt)}</time>
+      <span aria-hidden className="h-1 w-1 rounded-full bg-tangerine" />
+      <span>{readingTime(post.readingMinutes)}</span>
     </p>
   )
 }
 
-export function PostEntry({ post, priority = false }: { post: PostSummary; priority?: boolean }) {
-  const href = `/posts/${post.slug}`
+// O link do título cobre o cartão inteiro (::after), mantendo um único link acessível
+const stretched = 'after:absolute after:inset-0 after:content-[""]'
+
+export function PostCard({ post }: { post: PostSummary }) {
   return (
-    <article className="group grid gap-x-10 gap-y-4 border-t border-line py-10 first:border-t-0 first:pt-0 sm:grid-cols-[6.5rem_1fr]">
-      <EntryDate iso={post.publishedAt} />
-      <div className={post.mainImage ? 'grid gap-6 md:grid-cols-[1fr_15rem]' : undefined}>
-        <div>
-          <Categories post={post} />
-          <h2 className="font-display text-2xl font-semibold leading-snug tracking-tight sm:text-[1.75rem]">
-            <Link
-              href={href}
-              className="decoration-accent-soft decoration-2 underline-offset-[0.18em] group-hover:underline"
-            >
-              {post.title}
-            </Link>
-          </h2>
-          <p className="mt-3 max-w-[60ch] font-serif text-lg leading-relaxed text-muted">{post.excerpt}</p>
-          <Meta post={post} />
-        </div>
-        {post.mainImage && (
-          <Link href={href} tabIndex={-1} aria-hidden className="order-first md:order-none">
-            <SanityImage
-              image={post.mainImage}
-              sizes="(min-width: 768px) 240px, 100vw"
-              priority={priority}
-              className="aspect-[4/3] w-full rounded-md object-cover"
-            />
+    <article className="group relative flex flex-col overflow-hidden rounded-[1.75rem] bg-surface transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(43,38,96,0.35)]">
+      <Cover
+        post={post}
+        sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
+        className="aspect-[4/3] w-full transition duration-500 group-hover:scale-[1.03]"
+      />
+      <div className="flex flex-1 flex-col gap-4 p-6">
+        <Meta post={post} />
+        <h3 className="font-display text-2xl font-bold leading-tight tracking-tight">
+          <Link href={`/posts/${post.slug}`} className={stretched}>
+            {post.title}
           </Link>
-        )}
+        </h3>
+        <p className="line-clamp-3 text-muted">{post.excerpt}</p>
+        <div className="mt-auto pt-2">
+          <Chips categories={post.categories} />
+        </div>
       </div>
     </article>
   )
 }
 
-export function PostList({ posts }: { posts: PostSummary[] }) {
-  if (posts.length === 0) {
-    return <p className="font-serif text-lg italic text-muted">As primeiras páginas ainda estão em branco.</p>
-  }
+export function FeaturedPost({ post }: { post: PostSummary }) {
   return (
-    <div>
-      {posts.map((post, i) => (
-        <PostEntry key={post.slug} post={post} priority={i === 0} />
+    <article className="group relative grid overflow-hidden rounded-[2rem] bg-indigo text-on-indigo md:grid-cols-2">
+      <Cover
+        post={post}
+        sizes="(min-width: 768px) 560px, 100vw"
+        priority
+        cols={4}
+        rows={3}
+        className="aspect-[4/3] h-full w-full transition duration-500 group-hover:scale-[1.02]"
+      />
+      <div className="flex flex-col justify-center gap-5 p-8 sm:p-12">
+        <p className="label flex flex-wrap items-center gap-x-3 gap-y-2 whitespace-nowrap text-apricot">
+          <span className="rounded-full bg-apricot px-2.5 py-1 text-night">Novo</span>
+          <time dateTime={post.publishedAt}>{formatShortDate(post.publishedAt)}</time>
+          <span aria-hidden>·</span>
+          <span>{readingTime(post.readingMinutes)}</span>
+        </p>
+        <h3 className="font-display text-3xl font-extrabold leading-[1.05] tracking-tight sm:text-[2.6rem]">
+          <Link href={`/posts/${post.slug}`} className={stretched}>
+            {post.title}
+          </Link>
+        </h3>
+        <p className="text-lg text-on-indigo-muted">{post.excerpt}</p>
+        <p className="font-medium text-apricot">
+          Ler entrada <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+        </p>
+      </div>
+    </article>
+  )
+}
+
+export function PostGrid({ posts }: { posts: PostSummary[] }) {
+  if (posts.length === 0) return <p className="text-muted">Nenhuma entrada por aqui ainda.</p>
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <PostCard key={post.slug} post={post} />
       ))}
     </div>
   )

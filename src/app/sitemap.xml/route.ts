@@ -10,6 +10,8 @@ export async function GET() {
 
   const entries: Entry[] = [
     { url: siteUrl, lastModified: posts[0]?.updatedAt ?? posts[0]?.publishedAt, changeFrequency: 'daily', priority: 1 },
+    { url: `${siteUrl}/arquivo`, lastModified: posts[0]?.updatedAt ?? posts[0]?.publishedAt, changeFrequency: 'weekly', priority: 0.6 },
+    { url: `${siteUrl}/sobre`, changeFrequency: 'monthly', priority: 0.5 },
     ...posts.map((p) => ({
       url: `${siteUrl}/posts/${p.slug}`,
       lastModified: p.updatedAt ?? p.publishedAt,

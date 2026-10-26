@@ -56,5 +56,18 @@ export const authorSlugsQuery = defineQuery(
 )
 
 export const settingsQuery = defineQuery(
-  `*[_type == "siteSettings" && _id == "siteSettings"][0]{title, description, ogImage{${imageFields}}, sameAs}`,
+  `*[_type == "siteSettings" && _id == "siteSettings"][0]{title, description, sameAs, about[]{..., _type == "image" => {${imageFields}, caption}}}`,
+)
+
+export const archiveQuery = defineQuery(
+  `*[${visiblePost}] | order(publishedAt desc) {
+    title, "slug": slug.current, publishedAt,
+    "readingMinutes": round(length(pt::text(body)) / 5 / 200)
+  }`,
+)
+
+export const authorsQuery = defineQuery(
+  `*[_type == "author" && defined(slug.current)] | order(name asc) {
+    name, "slug": slug.current, jobTitle, bio, sameAs, image{${imageFields}}
+  }`,
 )

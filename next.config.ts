@@ -33,6 +33,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  // Fontes lidas em runtime pelas imagens Open Graph (src/lib/og.tsx)
+  outputFileTracingIncludes: { '/**': ['./assets/fonts/*.woff'] },
   turbopack: {
     rules: {
       '*.css': {
