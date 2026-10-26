@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { PostGrid } from '@/components/PostCard'
+import { PostList } from '@/components/PostCard'
 import { getCategory, getCategorySlugs } from '@/sanity/fetch'
 
 export async function generateStaticParams() {
@@ -27,19 +27,21 @@ async function CategoryContent({ params }: Pick<PageProps<'/categorias/[slug]'>,
 
   return (
     <>
-      <header className="mb-10">
-        <p className="text-sm uppercase tracking-wide text-[var(--accent)]">Categoria</p>
-        <h1 className="font-serif text-4xl font-bold">{category.title}</h1>
-        {category.description && <p className="mt-3 text-lg text-[var(--muted)]">{category.description}</p>}
+      <header className="mb-16 max-w-2xl">
+        <p className="eyebrow text-accent">Categoria</p>
+        <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">{category.title}</h1>
+        {category.description && (
+          <p className="mt-4 font-serif text-xl italic leading-relaxed text-muted">{category.description}</p>
+        )}
       </header>
-      <PostGrid posts={category.posts} />
+      <PostList posts={category.posts} />
     </>
   )
 }
 
 export default function CategoryPage({ params }: PageProps<'/categorias/[slug]'>) {
   return (
-    <Suspense fallback={<p className="text-[var(--muted)]">Carregando…</p>}>
+    <Suspense fallback={<p className="text-muted">Carregando…</p>}>
       <CategoryContent params={params} />
     </Suspense>
   )
